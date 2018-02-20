@@ -1,4 +1,4 @@
-
+A modified version of asterisk-voicechanger.Work with Asterisk13 and GSM codec.
               .--.                              .--.
             .'(`                               /  ..\
          __.>\ '.  _.---,._,'             ____.'  _o/
@@ -58,3 +58,4 @@ Add something like the following to your dialplan::
   exten => 9001,1,VoiceChanger(5.0)
   exten => 9001,2,Dial(sip/lolcat@example.com)
   exten => 9001,3,StopVoiceChanger() ; not required
+
