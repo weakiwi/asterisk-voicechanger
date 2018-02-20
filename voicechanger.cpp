@@ -14,7 +14,7 @@
 #include <soundtouch/SoundTouch.h>
 using soundtouch::SoundTouch;
 
-void *vc_soundtouch_create(int rate, float pitch)
+void *vc_soundtouch_create(int rate, float pitch, float tempo)
 {
     SoundTouch *st;
     st = new SoundTouch();
@@ -22,6 +22,7 @@ void *vc_soundtouch_create(int rate, float pitch)
         st->setChannels(1);
         st->setSampleRate(rate);
         st->setPitchSemiTones(pitch);
+        st->setTempo(tempo);
         st->setSetting(SETTING_USE_QUICKSEEK, 1);
         st->setSetting(SETTING_USE_AA_FILTER, 1);
     }

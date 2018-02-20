@@ -125,20 +125,21 @@ static void voicechanger_free(void *data)
     ast_log(LOG_DEBUG, "freed voice changer resources\n");
 }
 
-static int install_vc(struct ast_channel *chan, float pitch)
+static int install_vc(struct ast_channel *chan, float pitch,float tempo)
 {
     struct ast_datastore *ds;
     struct voicechanger *vc;
 
     ast_log(LOG_DEBUG, "pitch is %f\n", pitch);
+    ast_log(LOG_DEBUG, "tempo is %f\n", tempo);
     if (-0.1 < pitch && pitch < 0.1) {
         return 0;
     }
 
     /* create soundtouch object */
     vc = ast_calloc(1, sizeof(struct voicechanger));
-    if (!(vc->st8k = vc_soundtouch_create(8000, pitch)) ||
-        !(vc->st16k = vc_soundtouch_create(16000, pitch))) {
+    if (!(vc->st8k = vc_soundtouch_create(8000, pitch, tempo)) ||
+        !(vc->st16k = vc_soundtouch_create(16000, pitch, tempo))) {
         ast_log(LOG_ERROR, "failed to make soundtouch\n");
         return -1;
     }
@@ -178,14 +179,20 @@ static int voicechanger_exec(struct ast_channel *chan, const char *data)
 {
     int rc;
     struct ast_module_user *u;
-    float pitch;
+    char *parse;
+
+    AST_DECLARE_APP_ARGS(args,
+    	AST_APP_ARG(pitch);
+    	AST_APP_ARG(tempo);
+    );
+    parse = ast_strdupa(data);
+    AST_STANDARD_APP_ARGS(args, parse);
     if (ast_strlen_zero(data)) {
         ast_log(LOG_WARNING, "voicechanger() missing argument\n");
         return -1;
     }
-    pitch = strtof(data, NULL);
     u = ast_module_user_add(chan);
-    rc = install_vc(chan, pitch);
+    rc = install_vc(chan, strtof(args.pitch,NULL), strtof(args.tempo,NULL));
     ast_module_user_remove(u);
     return rc;
 }
